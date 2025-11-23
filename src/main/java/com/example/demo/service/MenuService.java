@@ -155,12 +155,46 @@ public class MenuService {
         // 查询该角色拥有的菜单权限
         List<Long> authorizedMenuIds = getAuthorizedMenuIdsByRole(role);
 
-        // 过滤出有权限的菜单
-        List<Menu> authorizedMenus = allMenus.stream()
-                .filter(menu -> authorizedMenuIds.contains(menu.getId()))
+        // 获取需要显示的所有菜单ID（包括必要的父级菜单）
+        List<Long> allMenuIdsToShow = getAllMenuIdsToShow(authorizedMenuIds, allMenus);
+
+        // 过滤出需要显示的菜单
+        List<Menu> menusToShow = allMenus.stream()
+                .filter(menu -> allMenuIdsToShow.contains(menu.getId()))
                 .collect(Collectors.toList());
 
-        return buildMenuTree(authorizedMenus);
+        return buildMenuTree(menusToShow);
+    }
+
+    private List<Long> getAllMenuIdsToShow(List<Long> authorizedMenuIds, List<Menu> allMenus) {
+        Set<Long> allIdsToShow = new HashSet<>();
+
+        // 首先添加所有有权限的菜单
+        allIdsToShow.addAll(authorizedMenuIds);
+
+        // 为每个有权限的菜单，添加其所有父级菜单（用于构建菜单树）
+        for (Long menuId : authorizedMenuIds) {
+            addAllParentMenusForDisplay(menuId, allIdsToShow, allMenus);
+        }
+
+        return new ArrayList<>(allIdsToShow);
+    }
+
+    private void addAllParentMenusForDisplay(Long menuId, Set<Long> menuIds, List<Menu> allMenus) {
+        Menu menu = allMenus.stream()
+                .filter(m -> m.getId().equals(menuId))
+                .findFirst()
+                .orElse(null);
+
+        if (menu == null || menu.getParentId() == null) {
+            return;
+        }
+
+        // 添加父级菜单ID（仅用于显示）
+        menuIds.add(menu.getParentId());
+
+        // 递归添加父级菜单的父级
+        addAllParentMenusForDisplay(menu.getParentId(), menuIds, allMenus);
     }
 
     // 修改获取授权菜单ID的方法，基于数据库查询
