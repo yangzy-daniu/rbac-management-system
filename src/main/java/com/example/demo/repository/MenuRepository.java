@@ -12,8 +12,10 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     List<Menu> findByParentIdOrderBySortAsc(Long parentId);
 
-//    List<Menu> findByAvailableTrueOrderBySortAsc();
-//    List<Menu> findByParentCodeIsNullOrderBySortOrder();
+    @Query("SELECT m FROM Menu m WHERE m.available = true ORDER BY m.sort ASC")
+    List<Menu> findAllAvailableMenus();
+
+    List<Menu> findByParentIdIsNullOrderBySortAsc();
 
     @Query("SELECT m FROM Menu m WHERE m.parentId IS NULL ORDER BY m.sort ASC")
     List<Menu> findRootMenus();
@@ -33,4 +35,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     // 查询指定父菜单下的最大排序值
     @Query("SELECT COALESCE(MAX(m.sort), 0) FROM Menu m WHERE m.parentId = :parentId")
     Integer findMaxSortByParentId(Long parentId);
+
+    Menu findByPath(String path);
+
 }

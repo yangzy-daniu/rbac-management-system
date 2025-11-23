@@ -201,13 +201,13 @@ public class MenuService {
     private List<Long> getAuthorizedMenuIdsByRole(String roleCode) {
         try {
             // 根据角色代码找到角色
-            Role role = roleRepository.findByCode(roleCode);
+            Optional<Role> role = roleRepository.findByCode(roleCode);
             if (role == null) {
                 return new ArrayList<>();
             }
 
             // 查询该角色的菜单权限
-            List<RoleMenu> roleMenus = roleMenuRepository.findByRoleId(role.getId());
+            List<RoleMenu> roleMenus = roleMenuRepository.findByRoleId(role.orElseThrow().getId());
 
             return roleMenus.stream()
                     .map(roleMenu -> {
