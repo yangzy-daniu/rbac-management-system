@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
+import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,9 @@ public class AuthService {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    RoleRepository roleRepository;
+
     // 简单的token存储，生产环境请使用JWT
     private final Map<String, Long> tokenStore = new HashMap<>();
 
@@ -26,6 +31,8 @@ public class AuthService {
 
         // 查找用户
         User user = userRepository.findByUsername(request.getUsername());
+        // 查询用户角色
+        Role role = roleRepository.findByCode(user.getRole());
 
         if (user == null || !user.getPassword().equals(request.getPassword())) {
             response.setSuccess(false);
@@ -42,7 +49,7 @@ public class AuthService {
         userInfo.setId(user.getId());
         userInfo.setUsername(user.getUsername());
         userInfo.setName(user.getName());
-        userInfo.setRole(user.getRole());
+        userInfo.setRoleName(role.getName());
 
         response.setSuccess(true);
         response.setMessage("登录成功");
