@@ -67,6 +67,7 @@ public class MenuService {
         existingMenu.setParentId(menu.getParentId());
         existingMenu.setComponent(menu.getComponent());
         existingMenu.setType(menu.getType());
+        existingMenu.setAvailable(menu.getAvailable()); // 添加这行
 
         // 处理parentId为0的情况（表示根菜单）
         if (existingMenu.getParentId() != null && existingMenu.getParentId() == 0) {

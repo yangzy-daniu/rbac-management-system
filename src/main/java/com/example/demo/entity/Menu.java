@@ -20,7 +20,6 @@ public class Menu {
     private String path;        // 路由路径
     private String icon;        // 图标
 
-    @Column(name = "sort_order")
     private Integer sort = 0;   // 排序
 
     @Column(name = "parent_id")
@@ -31,6 +30,9 @@ public class Menu {
     // 菜单类型：0-目录，1-菜单，2-按钮
     @Column(nullable = false)
     private Integer type = 0;
+
+    // 是否可用 TRUE：可用；FALSE:不可用
+    private Boolean available;
 
     //  transient 注解表示该字段不参与持久化
     @Transient

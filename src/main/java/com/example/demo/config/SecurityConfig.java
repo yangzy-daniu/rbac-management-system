@@ -26,7 +26,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/h2-console/**").permitAll() // 放行认证接口和 H2 控制台
+                        .requestMatchers("/api/auth/**", "/api/menus/**", "/h2-console/**").permitAll() // 放行认证接口和 H2 控制台
                         .anyRequest().authenticated()
                 );
 
