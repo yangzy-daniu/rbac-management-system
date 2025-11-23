@@ -16,4 +16,17 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     List<Menu> findRootMenus();
 
     List<Menu> findByTypeOrderBySortAsc(Integer type);
+
+    // 新增查询方法
+    List<Menu> findAllByOrderBySortAsc();
+
+    List<Menu> findByNameContainingIgnoreCaseOrderBySortAsc(String name);
+
+    boolean existsByPath(String path);
+
+    boolean existsByPathAndIdNot(String path, Long id);
+
+    // 查询指定父菜单下的最大排序值
+    @Query("SELECT COALESCE(MAX(m.sort), 0) FROM Menu m WHERE m.parentId = :parentId")
+    Integer findMaxSortByParentId(Long parentId);
 }
