@@ -12,10 +12,13 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     List<Menu> findByParentIdOrderBySortAsc(Long parentId);
 
+//    List<Menu> findByAvailableTrueOrderBySortAsc();
+//    List<Menu> findByParentCodeIsNullOrderBySortOrder();
+
     @Query("SELECT m FROM Menu m WHERE m.parentId IS NULL ORDER BY m.sort ASC")
     List<Menu> findRootMenus();
 
-    List<Menu> findByTypeOrderBySortAsc(Integer type);
+//    List<Menu> findByTypeOrderBySortAsc(Integer type);
 
     // 新增查询方法
     List<Menu> findAllByOrderBySortAsc();
