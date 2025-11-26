@@ -20,6 +20,15 @@ public class User {
     private String password;
 
     private String name;
+
+    private String email;
+    private String phone;
+    private String nickname;
+    private String avatar;
+    private String department;
+    private String position;
+    private Boolean enabled = true;
+
     /**
      * 创建时间
      */
@@ -32,4 +41,15 @@ public class User {
 
     // 角色字段，可以扩展为角色表
     private String role = "user";
+
+    @PrePersist
+    public void prePersist() {
+        createTime = LocalDateTime.now();
+        updateTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updateTime = LocalDateTime.now();
+    }
 }

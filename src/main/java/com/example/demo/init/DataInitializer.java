@@ -59,8 +59,8 @@ public class DataInitializer {
         // 一级菜单 - 首页
         Menu homeMenu = new Menu();
         homeMenu.setName("首页");
-        homeMenu.setIcon("House");
         homeMenu.setPath("/home");
+        homeMenu.setIcon("House");
         homeMenu.setComponent("Home");
         homeMenu.setSort(1);
         homeMenu.setType(1); // 菜单
@@ -68,44 +68,90 @@ public class DataInitializer {
         menuRepository.save(homeMenu);
 
         // 一级菜单 - 工作台
-        Menu dashboardMenu = new Menu();
-        dashboardMenu.setName("工作台");
-        dashboardMenu.setPath("/dashboard");
-        dashboardMenu.setIcon("Monitor");
-        dashboardMenu.setSort(2);
-        dashboardMenu.setType(0); // 目录
-        dashboardMenu.setAvailable(true);
-        dashboardMenu = menuRepository.save(dashboardMenu);
-
-        // 二级菜单 - 分析页
-        Menu analysisMenu = new Menu();
-        analysisMenu.setName("分析页");
-        analysisMenu.setPath("/analysis");
-        analysisMenu.setIcon("PieChart");
-        analysisMenu.setSort(1);
-        analysisMenu.setParentId(dashboardMenu.getId());
-        analysisMenu.setComponent("Analysis");
-        analysisMenu.setType(1); // 菜单
-        analysisMenu.setAvailable(true);
-        menuRepository.save(analysisMenu);
+        Menu workstationMenu = new Menu();
+        workstationMenu.setName("工作台");
+        workstationMenu.setPath("/workstation");
+        workstationMenu.setIcon("Monitor");
+        workstationMenu.setComponent("Workstation");
+        workstationMenu.setSort(2);
+        workstationMenu.setType(1); // 菜单
+        workstationMenu.setAvailable(true);
+        menuRepository.save(workstationMenu);
 
         // 一级菜单 - 个人中心
         Menu profileMenu = new Menu();
         profileMenu.setName("个人中心");
         profileMenu.setPath("/profile");
         profileMenu.setIcon("User");
+        profileMenu.setComponent("Profile");
         profileMenu.setSort(3);
         profileMenu.setType(1); // 菜单
-        profileMenu.setComponent("Profile");
         profileMenu.setAvailable(true);
         menuRepository.save(profileMenu);
+
+        // 一级菜单 - 数据分析
+        Menu analysisMenu = new Menu();
+        analysisMenu.setName("数据分析");
+        analysisMenu.setPath("/analysis");
+        analysisMenu.setIcon("Histogram");
+        analysisMenu.setSort(4);
+        analysisMenu.setType(0); // 目录
+        analysisMenu.setAvailable(true);
+        analysisMenu = menuRepository.save(analysisMenu);
+
+        // 二级菜单 - 数据概览
+        Menu dashboardMenu = new Menu();
+        dashboardMenu.setName("数据概览");
+        dashboardMenu.setPath("/dashboard");
+        dashboardMenu.setIcon("DataAnalysis");
+        dashboardMenu.setComponent("Dashboard");
+        dashboardMenu.setSort(1);
+        dashboardMenu.setType(1); // 菜单
+        dashboardMenu.setParentId(analysisMenu.getId());
+        dashboardMenu.setAvailable(true);
+        menuRepository.save(dashboardMenu);
+
+        // 二级菜单 - 系统分析
+        Menu sysAMenu = new Menu();
+        sysAMenu.setName("系统分析");
+        sysAMenu.setPath("/sysA");
+        sysAMenu.setIcon("Histogram");
+        sysAMenu.setComponent("SystemAnalysis");
+        sysAMenu.setSort(2);
+        sysAMenu.setType(1); // 菜单
+        sysAMenu.setParentId(analysisMenu.getId());
+        sysAMenu.setAvailable(true);
+        menuRepository.save(sysAMenu);
+
+        // 二级菜单 - 用户分析
+        Menu userAMenu = new Menu();
+        userAMenu.setName("用户分析");
+        userAMenu.setPath("/userA");
+        userAMenu.setIcon("PieChart");
+        userAMenu.setComponent("UserAnalysis");
+        userAMenu.setSort(3);
+        userAMenu.setType(1); // 菜单
+        userAMenu.setParentId(analysisMenu.getId());
+        userAMenu.setAvailable(true);
+        menuRepository.save(userAMenu);
+
+        // 一级菜单 - 订单管理
+        Menu orderMenu = new Menu();
+        orderMenu.setName("订单管理");
+        orderMenu.setPath("/order");
+        orderMenu.setIcon("ShoppingCart");
+        orderMenu.setComponent("OrderManagement");
+        orderMenu.setSort(5);
+        orderMenu.setType(1); // 菜单
+        orderMenu.setAvailable(true);
+        menuRepository.save(orderMenu);
 
         // 一级菜单 - 系统管理
         Menu systemMenu = new Menu();
         systemMenu.setName("系统管理");
+        systemMenu.setPath("/sysManagement");
         systemMenu.setIcon("Setting");
-        systemMenu.setPath("/system");
-        systemMenu.setSort(4);
+        systemMenu.setSort(6);
         systemMenu.setType(0); // 目录
         systemMenu.setAvailable(true);
         systemMenu = menuRepository.save(systemMenu);
@@ -115,10 +161,10 @@ public class DataInitializer {
         userMenu.setName("用户管理");
         userMenu.setPath("/user");
         userMenu.setIcon("User");
-        userMenu.setSort(1);
-        userMenu.setParentId(systemMenu.getId());
         userMenu.setComponent("UserManagement");
+        userMenu.setSort(1);
         userMenu.setType(1); // 菜单
+        userMenu.setParentId(systemMenu.getId());
         userMenu.setAvailable(true);
         menuRepository.save(userMenu);
 
@@ -126,11 +172,11 @@ public class DataInitializer {
         Menu roleMenu = new Menu();
         roleMenu.setName("角色管理");
         roleMenu.setPath("/role");
-        roleMenu.setIcon("Lock");
-        roleMenu.setSort(2);
-        roleMenu.setParentId(systemMenu.getId());
+        roleMenu.setIcon("Key");
         roleMenu.setComponent("RoleManagement");
+        roleMenu.setSort(2);
         roleMenu.setType(1); // 菜单
+        roleMenu.setParentId(systemMenu.getId());
         roleMenu.setAvailable(true);
         menuRepository.save(roleMenu);
 
@@ -139,12 +185,58 @@ public class DataInitializer {
         menuManager.setName("菜单管理");
         menuManager.setPath("/menu");
         menuManager.setIcon("Menu");
-        menuManager.setSort(3);
-        menuManager.setParentId(systemMenu.getId());
         menuManager.setComponent("MenuManagement");
+        menuManager.setSort(3);
         menuManager.setType(1); // 菜单
+        menuManager.setParentId(systemMenu.getId());
         menuManager.setAvailable(true);
         menuRepository.save(menuManager);
+
+        // 二级菜单 - 系统设置
+        Menu systemSetMenu = new Menu();
+        systemSetMenu.setName("系统设置");
+        systemSetMenu.setPath("/system");
+        systemSetMenu.setIcon("Tools");
+        systemSetMenu.setComponent("SystemSettings");
+        systemSetMenu.setSort(4);
+        systemSetMenu.setType(1); // 菜单
+        systemSetMenu.setParentId(systemMenu.getId());
+        systemSetMenu.setAvailable(true);
+        menuRepository.save(systemSetMenu);
+
+        // 一级菜单 - 日志管理
+        Menu logMenu = new Menu();
+        logMenu.setName("日志管理");
+        logMenu.setPath("/logManagement");
+        logMenu.setIcon("Notebook");
+        logMenu.setSort(7);
+        logMenu.setType(0); // 目录
+        logMenu.setAvailable(true);
+        logMenu = menuRepository.save(logMenu);
+
+        // 二级菜单 - 操作日志
+        Menu auditLogsMenu = new Menu();
+        auditLogsMenu.setName("操作日志");
+        auditLogsMenu.setPath("/auditLogs");
+        auditLogsMenu.setIcon("Operation");
+        auditLogsMenu.setComponent("AuditLogs");
+        auditLogsMenu.setSort(1);
+        auditLogsMenu.setType(1); // 菜单
+        auditLogsMenu.setParentId(logMenu.getId());
+        auditLogsMenu.setAvailable(true);
+        menuRepository.save(auditLogsMenu);
+
+        // 二级菜单 - 系统日志
+        Menu sysLogsMenu = new Menu();
+        sysLogsMenu.setName("系统日志");
+        sysLogsMenu.setPath("/sysLogs");
+        sysLogsMenu.setIcon("DataBoard");
+        sysLogsMenu.setComponent("SystemLogs");
+        sysLogsMenu.setSort(1);
+        sysLogsMenu.setType(1); // 菜单
+        sysLogsMenu.setParentId(logMenu.getId());
+        sysLogsMenu.setAvailable(true);
+        menuRepository.save(sysLogsMenu);
 
         log.info("菜单数据初始化完成，共创建 {} 个菜单", menuRepository.count());
     }

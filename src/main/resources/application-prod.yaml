@@ -9,7 +9,7 @@ spring:
     password: 123456  # 生产环境建议设置密码
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update # validate 验证数据库中的表结构是否与实体类（Entity）的映射匹配
     show-sql: false  # 生产环境关闭SQL日志
   h2:
     console:

@@ -34,7 +34,16 @@ public class UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getName(),
-                user.getRole()
+                user.getRole(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getNickname(),
+                user.getDepartment(),
+                user.getPosition(),
+                user.getEnabled(),
+                user.getCreateTime(),
+                user.getUpdateTime()
         );
     }
 
