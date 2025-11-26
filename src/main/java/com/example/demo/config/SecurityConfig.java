@@ -18,19 +18,34 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 启用 CORS
+//                .csrf(csrf -> csrf.disable()) // 禁用 CSRF
+//                .headers(headers -> headers
+//                        .frameOptions(frame -> frame.disable()) // 允许 H2 控制台嵌入 iframe
+//                )
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/auth/**", "/api/menus/**",
+//                                "/api/users/**","/api/roles/**",
+//                                "/api/analysis/**","/api/profile/**",
+//                                "/h2-console/**").permitAll() // 放行认证接口和 H2 控制台
+//                        .anyRequest().authenticated()
+//                );
+//
+//        return http.build();
+//    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 启用 CORS
-                .csrf(csrf -> csrf.disable()) // 禁用 CSRF
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable()) // 允许 H2 控制台嵌入 iframe
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/menus/**", "/api/users/**","/api/roles/**", "/h2-console/**").permitAll() // 放行认证接口和 H2 控制台
-                        .anyRequest().authenticated()
-                );
+                        .anyRequest().permitAll()  // 允许所有请求
+                )
+                .csrf(csrf -> csrf.disable())  // 禁用CSRF
+                .cors(cors -> cors.disable()); // 禁用CORS
 
         return http.build();
     }
@@ -38,7 +53,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -48,8 +63,4 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
