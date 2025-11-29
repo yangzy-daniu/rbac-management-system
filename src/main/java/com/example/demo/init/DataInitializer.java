@@ -219,7 +219,7 @@ public class DataInitializer {
         auditLogsMenu.setName("操作日志");
         auditLogsMenu.setPath("/auditLogs");
         auditLogsMenu.setIcon("Operation");
-        auditLogsMenu.setComponent("AuditLogs");
+        auditLogsMenu.setComponent("OperationLog");
         auditLogsMenu.setSort(1);
         auditLogsMenu.setType(1); // 菜单
         auditLogsMenu.setParentId(logMenu.getId());
@@ -286,7 +286,7 @@ public class DataInitializer {
         adminUser.setUsername("admin");
         adminUser.setPassword(passwordEncoder.encode("123456"));
         adminUser.setName("系统管理员");
-        adminUser.setRole("admin");
+        adminUser.setRoleCode("admin");
         adminUser.setCreateTime(LocalDateTime.now());
         adminUser.setUpdateTime(LocalDateTime.now());
         userRepository.save(adminUser);
@@ -295,7 +295,7 @@ public class DataInitializer {
         superUser.setUsername("superAdmin");
         superUser.setPassword(passwordEncoder.encode("123456"));
         superUser.setName("超级管理员");
-        superUser.setRole("super");
+        superUser.setRoleCode("super");
         superUser.setCreateTime(LocalDateTime.now());
         superUser.setUpdateTime(LocalDateTime.now());
         userRepository.save(superUser);
@@ -304,7 +304,7 @@ public class DataInitializer {
         normalUser.setUsername("user");
         normalUser.setPassword(passwordEncoder.encode("123456"));
         normalUser.setName("张三");
-        normalUser.setRole("user");
+        normalUser.setRoleCode("user");
         normalUser.setCreateTime(LocalDateTime.now());
         normalUser.setUpdateTime(LocalDateTime.now());
         userRepository.save(normalUser);
@@ -313,7 +313,7 @@ public class DataInitializer {
         guestUser.setUsername("guest");
         guestUser.setPassword(passwordEncoder.encode("123456"));
         guestUser.setName("李四");
-        guestUser.setRole("guest");
+        guestUser.setRoleCode("guest");
         guestUser.setCreateTime(LocalDateTime.now());
         guestUser.setUpdateTime(LocalDateTime.now());
         userRepository.save(guestUser);

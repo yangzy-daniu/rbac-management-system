@@ -34,3 +34,8 @@ logging:
   level:
     com.example.demo: info
     org.hibernate: warn
+
+app:
+  jwt:
+    secret: "MySuperSecretKeyThatIsAtLeast32BytesLong!"
+    expiration: 86400000

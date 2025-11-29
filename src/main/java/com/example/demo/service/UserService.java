@@ -34,7 +34,7 @@ public class UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getName(),
-                user.getRole(),
+                user.getRoleCode(),
                 user.getPassword(),
                 user.getEmail(),
                 user.getPhone(),
@@ -64,7 +64,6 @@ public class UserService {
     }
 
     // 分页查询用户
-// 在 UserService 中添加方法
     public Page<User> getUsersByPage(int page, int size, String keyword, String role) {
         Pageable pageable = PageRequest.of(page - 1, size);
 

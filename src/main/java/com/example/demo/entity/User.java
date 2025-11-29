@@ -42,7 +42,7 @@ public class User {
     private LocalDateTime updateTime;
 
     // 角色字段，可以扩展为角色表
-    private String role = "user";
+    private String roleCode = "user";
 
     @PrePersist
     public void prePersist() {

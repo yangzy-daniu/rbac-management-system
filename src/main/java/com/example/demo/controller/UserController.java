@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotation.OperationLog;
 import com.example.demo.dto.UserInfoDTO;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
@@ -39,6 +40,7 @@ public class UserController {
     }
 
     // 分页查询用户
+    @OperationLog(module = "用户管理", type = "CREATE", value = "查询用户")
     @GetMapping("/getUsersPage")
     public Page<User> getUsersByPage(
             @RequestParam(defaultValue = "1") int page,
@@ -59,7 +61,7 @@ public class UserController {
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         User existingUser = repo.findById(id).orElseThrow();
         existingUser.setName(user.getName());
-        existingUser.setRole(user.getRole());
+        existingUser.setRoleCode(user.getRoleCode());
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             existingUser.setPassword(user.getPassword());
         }
