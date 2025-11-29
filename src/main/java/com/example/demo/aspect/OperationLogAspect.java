@@ -19,6 +19,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.demo.common.context.SecurityContext.getCurrentUserId;
+import static com.example.demo.common.context.SecurityContext.getCurrentUsername;
+
 @Slf4j
 @Aspect
 @Component
@@ -92,9 +95,9 @@ public class OperationLogAspect {
 //        operationLog.setOperatorId(1L); // 实际项目中从认证信息获取
 
         // 设置操作者和租户信息
-//        String currentUsername = getCurrentUsername();
-//        operationLog.setOperator(currentUsername);
-//        operationLog.setOperatorId(getCurrentUserId());
+        String currentUsername = getCurrentUsername();
+        operationLog.setOperator(currentUsername);
+        operationLog.setOperatorId(getCurrentUserId());
         operationLog.setTenantId(getCurrentTenantId());
 
         // 设置结果信息
