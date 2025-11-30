@@ -55,7 +55,7 @@ public class AuthService {
         }
 
         // 使用 JWT 生成 token
-        String token = jwtTokenProvider.generateToken(user.getUsername(), user.getId(), 0L);
+        String token = jwtTokenProvider.generateToken(user.getUsername(), user.getId(), 1L);
 
         // 构建用户信息
         LoginResponse.UserInfo userInfo = new LoginResponse.UserInfo();

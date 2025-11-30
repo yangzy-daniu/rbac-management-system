@@ -23,7 +23,7 @@ public class SecurityContext {
     }
 
     /**
-     * 获取当前用户名
+     * 获取当前用户登录账号
      */
     public static String getCurrentUsername() {
         Authentication authentication = getAuthentication();
@@ -78,44 +78,6 @@ public class SecurityContext {
         return null;
     }
 
-//    /**
-//     * 获取当前用户租户ID
-//     */
-//    public static Long getCurrentUserTenantId() {
-//        Authentication authentication = getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return null;
-//        }
-//
-//        Object principal = authentication.getPrincipal();
-//
-//        // 如果是自定义的UserDetails实现
-//        if (principal instanceof CustomUserDetails) {
-//            return ((CustomUserDetails) principal).getTenantId();
-//        }
-//
-//        // 从JWT Claims中获取
-//        try {
-//            Object tenantId = authentication.getCredentials();
-//            if (tenantId instanceof Long) return (Long) tenantId;
-//
-//            // 从认证详情获取
-//            Object details = authentication.getDetails();
-//            if (details instanceof Map) {
-//                @SuppressWarnings("unchecked")
-//                Map<String, Object> detailsMap = (Map<String, Object>) details;
-//                Object tenant = detailsMap.get("tenantId");
-//                if (tenant instanceof Long) return (Long) tenant;
-//                if (tenant instanceof Integer) return ((Integer) tenant).longValue();
-//                if (tenant instanceof String) return Long.valueOf((String) tenant);
-//            }
-//        } catch (Exception e) {
-//            log.debug("获取用户租户ID失败: {}", e.getMessage());
-//        }
-//
-//        return null;
-//    }
-
     /**
      * 获取当前用户角色
      */
@@ -129,6 +91,44 @@ public class SecurityContext {
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .reduce((a, b) -> a + "," + b)
                 .orElse(null);
+    }
+
+    /**
+     * 获取当前用户租户ID
+     */
+    public static Long getCurrentTenantId() {
+        Authentication authentication = getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        // 如果是自定义的UserDetails实现
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) principal).getTenantId();
+        }
+
+        // 从JWT Claims中获取
+        try {
+            Object tenantId = authentication.getCredentials();
+            if (tenantId instanceof Long) return (Long) tenantId;
+
+            // 从认证详情获取
+            Object details = authentication.getDetails();
+            if (details instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> detailsMap = (Map<String, Object>) details;
+                Object tenant = detailsMap.get("tenantId");
+                if (tenant instanceof Long) return (Long) tenant;
+                if (tenant instanceof Integer) return ((Integer) tenant).longValue();
+                if (tenant instanceof String) return Long.valueOf((String) tenant);
+            }
+        } catch (Exception e) {
+            log.debug("获取用户租户ID失败: {}", e.getMessage());
+        }
+
+        return null;
     }
 
     /**

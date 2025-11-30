@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtTokenProvider {
@@ -48,7 +49,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("userId", userId)
-//                .claim("tenantId", tenantId)
+                .claim("tenantId", tenantId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -71,6 +72,60 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.get("userId", Long.class);
+    }
+
+    /**
+     * 从JWT中解析租户ID
+     */
+    public Long getTenantIdFromJWT(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // 从claims中获取tenantId
+            Object tenantIdObj = claims.get("tenantId");
+
+            if (tenantIdObj == null) {
+                return null;  // 如果没有tenantId声明，返回null
+            }
+
+            // 处理不同类型的tenantId值
+            if (tenantIdObj instanceof Long) {
+                return (Long) tenantIdObj;
+            } else if (tenantIdObj instanceof Integer) {
+                return ((Integer) tenantIdObj).longValue();
+            } else if (tenantIdObj instanceof String) {
+                try {
+                    return Long.valueOf((String) tenantIdObj);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid tenantId format in token: " + tenantIdObj);
+                }
+            } else {
+                throw new IllegalArgumentException("Unsupported tenantId type in token: " + tenantIdObj.getClass().getName());
+            }
+
+        } catch (Exception e) {
+            // 记录错误日志但不抛出异常，因为可能在其他验证方法中已经处理过
+            System.err.println("Failed to get tenantId from JWT: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 从JWT中解析角色列表
+     */
+    public List<String> getRolesFromJWT(String token) {
+        Claims claims = Jwts.parserBuilder()
+//                .setSigningKey(jwtSecret)
+                .setSigningKey(getSigningKey())  // 修复：使用getSigningKey()而不是jwtSecret
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("roles", List.class);
     }
 
 //    public Long getTenantIdFromJWT(String token) {
