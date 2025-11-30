@@ -1,6 +1,5 @@
 package com.example.demo.aspect;
 
-import com.example.demo.common.context.TenantContext;
 import com.example.demo.entity.OperationLog;
 import com.example.demo.service.OperationLogService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.demo.common.context.SecurityContext.getCurrentUserId;
-import static com.example.demo.common.context.SecurityContext.getCurrentUsername;
+import static com.example.demo.common.context.SecurityContext.*;
 
 @Slf4j
 @Aspect
@@ -36,14 +34,20 @@ public class OperationLogAspect {
 //    @Pointcut("execution(* com.example.demo.controller..*.*(..))")
     // 使用 !execution() 排除特定类
     @Pointcut("execution(* com.example.demo.controller..*.*(..)) && !execution(* com.example.demo.controller.OperationLogController.*(..))")
-//    // 使用 !within() 排除特定包
-//    @Pointcut("execution(* com.example.demo.controller..*.*(..)) && !within(com.example.demo.controller.OperationLogController)")
-//    // 使用包路径排除（推荐）
-//    @Pointcut("execution(* com.example.demo.controller..*.*(..)) && !within(com.example.demo.controller.OperationLogController+)")
     public void controllerPointcut() {}
 
     @Around("operationLogPointcut() || controllerPointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        // 获取请求信息进行判断
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+
+            // 判断是否是不需要记录的请求
+            if (isExcludeRequest(request, joinPoint)) {
+                return joinPoint.proceed();
+            }
+        }
         long startTime = System.currentTimeMillis();
         Object result = null;
         Throwable error = null;
@@ -90,13 +94,8 @@ public class OperationLogAspect {
         // 使用新的解析方法生成友好的操作描述
         operationLog.setOperation(parseOperation(className, methodName, joinPoint.getArgs()));
 
-//        // 设置操作者和结果
-//        operationLog.setOperator("admin"); // 可以从SecurityContext获取当前用户
-//        operationLog.setOperatorId(1L); // 实际项目中从认证信息获取
-
         // 设置操作者和租户信息
-        String currentUsername = getCurrentUsername();
-        operationLog.setOperator(currentUsername);
+        operationLog.setOperator(getCurrentUsername());
         operationLog.setOperatorId(getCurrentUserId());
         operationLog.setTenantId(getCurrentTenantId());
 
@@ -170,6 +169,8 @@ public class OperationLogAspect {
         if (className.contains("User")) return "用户管理";
         if (className.contains("Role")) return "角色管理";
         if (className.contains("Menu")) return "菜单管理";
+        if (className.contains("System")) return "系统设置";
+        if (className.contains("Profile")) return "个人中心";
         if (className.contains("Auth")) return "登录系统";
         return "其他";
     }
@@ -447,31 +448,18 @@ public class OperationLogAspect {
     }
 
     /**
-     * 获取当前租户ID（综合方案）
+     * 判断是否是不需要记录的请求
      */
-    private Long getCurrentTenantId() {
-        // 优先级1：从ThreadLocal上下文获取
-        Long tenantId = TenantContext.getTenantId();
-        if (tenantId != null) {
-            return tenantId;
-        }
+    private boolean isExcludeRequest(HttpServletRequest request, ProceedingJoinPoint joinPoint) {
+        String requestURI = request.getRequestURI();
+        String methodName = joinPoint.getSignature().getName();
+        String className = joinPoint.getTarget().getClass().getSimpleName();
 
-//        // 优先级2：从JWT Token获取
-//        tenantId = getTenantIdFromJwt();
-//        if (tenantId != null) {
-//            return tenantId;
-//        }
-//
-//        // 优先级3：从请求头获取
-//        tenantId = getTenantIdFromHeader();
-//        if (tenantId != null) {
-//            return tenantId;
-//        }
-//
-//        // 优先级4：从当前用户信息获取
-//        tenantId = getTenantIdFromCurrentUser();
+        // 1. Layout加载菜单的请求
+        boolean isLayoutMenu = className.equals("MenuController") &&
+                methodName.equals("getUserMenus") &&
+                requestURI.equals("/api/menus/tree");
 
-        // 默认值（根据业务需求）
-        return tenantId != null ? tenantId : 0L; // 0表示系统级操作或无租户
+        return isLayoutMenu;
     }
 }
