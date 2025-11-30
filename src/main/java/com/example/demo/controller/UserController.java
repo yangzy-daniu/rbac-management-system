@@ -21,7 +21,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // 先全放行，生产再收窄
 public class UserController {
 
     @Resource

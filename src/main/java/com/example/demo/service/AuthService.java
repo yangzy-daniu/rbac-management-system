@@ -8,15 +8,18 @@ import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -29,6 +32,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final TokenBlacklist tokenBlacklist;
+
+    private final SystemMonitorService systemMonitorService;
 
 //    private final RedisTemplate<String, String> redisTemplate; // 需要添加Redis依赖和配置
 
@@ -52,6 +57,19 @@ public class AuthService {
             response.setSuccess(false);
             response.setMessage("密码错误");
             return response;
+        }
+
+        // 记录在线用户
+        HttpServletRequest httpRequest = getCurrentHttpRequest();
+        if (httpRequest != null) {
+            String sessionId = httpRequest.getSession().getId();
+            String ipAddress = getClientIp(httpRequest);
+            String userAgent = httpRequest.getHeader("User-Agent");
+
+            systemMonitorService.userLogin(user.getId(), user.getUsername(),
+                    sessionId, ipAddress, userAgent);
+
+            log.info("用户 {} 登录成功，会话ID已存储: {}", user.getUsername(), sessionId);
         }
 
         // 使用 JWT 生成 token
@@ -82,6 +100,13 @@ public class AuthService {
 
         // 加入黑名单，有效期24小时
         tokenBlacklist.add(token, 24 * 60 * 60 * 1000L);
+
+        // 移除在线用户记录
+        HttpServletRequest httpRequest = getCurrentHttpRequest();
+        if (httpRequest != null) {
+            String sessionId = httpRequest.getSession().getId();
+            systemMonitorService.userLogout(sessionId);
+        }
     }
 
     public boolean validateToken(String token) {
@@ -171,4 +196,29 @@ public class AuthService {
         return user != null ? user.getRoleCode() : null;
     }
 
+    // 获取当前HTTP请求
+    private HttpServletRequest getCurrentHttpRequest() {
+        try {
+            ServletRequestAttributes attributes = (ServletRequestAttributes)
+                    RequestContextHolder.currentRequestAttributes();
+            return attributes.getRequest();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // 获取客户端IP
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
 }

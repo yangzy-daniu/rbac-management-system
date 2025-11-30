@@ -33,7 +33,11 @@ public class OperationLogAspect {
 
 //    @Pointcut("execution(* com.example.demo.controller..*.*(..))")
     // 使用 !execution() 排除特定类
-    @Pointcut("execution(* com.example.demo.controller..*.*(..)) && !execution(* com.example.demo.controller.OperationLogController.*(..))")
+    @Pointcut("execution(* com.example.demo.controller..*.*(..)) && " +
+            "!execution(* com.example.demo.controller.OperationLogController.*(..)) && " +
+            "!execution(* com.example.demo.controller.OnlineUserController.*(..)) && " +
+            "!execution(* com.example.demo.controller.SystemMonitorController.*(..)) && " +
+            "!execution(* com.example.demo.controller.StatsController.*(..))")
     public void controllerPointcut() {}
 
     @Around("operationLogPointcut() || controllerPointcut()")

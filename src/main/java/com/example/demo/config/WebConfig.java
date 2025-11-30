@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.interceptor.UserActivityInterceptor;
 import com.example.demo.service.AuthService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,8 +16,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    @Resource
-    private AuthService authService;
+    private final AuthService authService;
+
+    private final UserActivityInterceptor userActivityInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -46,7 +48,13 @@ public class WebConfig implements WebMvcConfigurer {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
-        }).addPathPatterns("/api/**");
+        }).addPathPatterns("/api/**").order(1); // 设置优先级;
+
+        // 用户活动拦截器 - 优先级低
+        registry.addInterceptor(userActivityInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/js/**", "/images/**", "/api-docs/**", "/swagger-ui/**")
+                .order(2); // 设置优先级
     }
 
     @Override
@@ -54,4 +62,5 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/");
     }
+
 }
