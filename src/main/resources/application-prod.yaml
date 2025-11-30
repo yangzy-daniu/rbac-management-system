@@ -39,3 +39,6 @@ app:
   jwt:
     secret: "MySuperSecretKeyThatIsAtLeast32BytesLong!"
     expiration: 86400000
+
+cors:
+  allowed-origins: http://110.40.209.238:8081
