@@ -192,13 +192,25 @@ public class DataInitializer {
         menuManager.setAvailable(true);
         menuRepository.save(menuManager);
 
+        // 二级菜单 - 系统监控
+        Menu monitorSetMenu = new Menu();
+        monitorSetMenu.setName("系统监控");
+        monitorSetMenu.setPath("/monitor");
+        monitorSetMenu.setIcon("DataBoard");
+        monitorSetMenu.setComponent("SystemMonitor");
+        monitorSetMenu.setSort(4);
+        monitorSetMenu.setType(1); // 菜单
+        monitorSetMenu.setParentId(systemMenu.getId());
+        monitorSetMenu.setAvailable(true);
+        menuRepository.save(monitorSetMenu);
+
         // 二级菜单 - 系统设置
         Menu systemSetMenu = new Menu();
         systemSetMenu.setName("系统设置");
         systemSetMenu.setPath("/system");
         systemSetMenu.setIcon("Tools");
         systemSetMenu.setComponent("SystemSettings");
-        systemSetMenu.setSort(4);
+        systemSetMenu.setSort(5);
         systemSetMenu.setType(1); // 菜单
         systemSetMenu.setParentId(systemMenu.getId());
         systemSetMenu.setAvailable(true);
@@ -229,10 +241,10 @@ public class DataInitializer {
         // 二级菜单 - 系统日志
         Menu sysLogsMenu = new Menu();
         sysLogsMenu.setName("系统日志");
-        sysLogsMenu.setPath("/sysLogs");
-        sysLogsMenu.setIcon("DataBoard");
+        sysLogsMenu.setPath("/systemLogs");
+        sysLogsMenu.setIcon("Document");
         sysLogsMenu.setComponent("SystemLogs");
-        sysLogsMenu.setSort(1);
+        sysLogsMenu.setSort(2);
         sysLogsMenu.setType(1); // 菜单
         sysLogsMenu.setParentId(logMenu.getId());
         sysLogsMenu.setAvailable(true);

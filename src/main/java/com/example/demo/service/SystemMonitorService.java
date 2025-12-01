@@ -27,6 +27,7 @@ public class SystemMonitorService {
     private final SystemInfoRepository systemInfoRepository;
     private final OnlineUserRepository onlineUserRepository;
     private final VersionService versionService;
+    private final SystemLogService systemLogService;
 
     // 系统启动时初始化系统信息
     @PostConstruct
@@ -103,6 +104,8 @@ public class SystemMonitorService {
 
             onlineUserRepository.save(onlineUser);
             log.info("用户 {} 登录系统，IP: {}", username, ipAddress);
+            systemLogService.logInfo("用户服务",
+                    String.format("用户 %s 登录系统", username));
         } catch (Exception e) {
             log.error("记录在线用户失败: {}", e.getMessage());
         }
@@ -114,9 +117,8 @@ public class SystemMonitorService {
         try {
             // 通过sessionId查找
             Optional<OnlineUser> onlineUserOpt = onlineUserRepository.findById(sessionId);
-
+            OnlineUser onlineUser = onlineUserOpt.get();
             if (onlineUserOpt.isPresent()) {
-                OnlineUser onlineUser = onlineUserOpt.get();
                 onlineUserRepository.delete(onlineUser);
                 log.info("用户 {} 通过会话退出系统，会话ID: {}", onlineUser.getUsername(), sessionId);
             } else {
@@ -124,6 +126,8 @@ public class SystemMonitorService {
                 // 通过当前请求的用户信息来清理
                 cleanupByCurrentUser();
             }
+            systemLogService.logInfo("用户服务",
+                    String.format("用户 %s 退出系统", onlineUser.getUsername()));
         } catch (Exception e) {
             log.error("移除在线用户失败: {}", e.getMessage());
         }
@@ -176,6 +180,8 @@ public class SystemMonitorService {
         LocalDateTime expireTime = LocalDateTime.now().minusMinutes(30); // 30分钟无活动视为过期
         int deletedCount = onlineUserRepository.deleteExpiredSessions(expireTime);
         if (deletedCount > 0) {
+            systemLogService.logInfo("会话管理",
+                    String.format("清理了 %d 个过期会话", deletedCount));
             log.info("清理了 {} 个过期会话", deletedCount);
         }
     }
@@ -195,14 +201,4 @@ public class SystemMonitorService {
         systemInfoRepository.save(systemInfo);
     }
 
-    // 创建默认系统信息
-    private SystemInfo createDefaultSystemInfo() {
-        SystemInfo systemInfo = new SystemInfo();
-        systemInfo.setSystemVersion("V2.1.0");
-        systemInfo.setLastUpdateDate(LocalDateTime.of(2023, 10, 15, 0, 0));
-        systemInfo.setSystemStatus("RUNNING");
-        systemInfo.setDescription("RBAC权限管理系统");
-        systemInfo.setUpdateUser("系统管理员");
-        return systemInfoRepository.save(systemInfo);
-    }
 }
