@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.User;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,7 +9,8 @@ public class UserInfoDTO {
     private Long id;
     private String username;
     private String name;
-    private String role;
+    private String roleCode;
+    private String roleName;
     private String avatar;
     private String password;
     private String email;
@@ -22,14 +22,14 @@ public class UserInfoDTO {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
-    public UserInfoDTO(Long id, String username, String name, String role,
-                       String password, String email,String phone,
-                       String nickname,String department,String position,
-                       Boolean enabled,LocalDateTime createTime,LocalDateTime updateTime) {
+    public UserInfoDTO(Long id, String username, String name, String roleCode,
+                       String password, String email, String phone,
+                       String nickname, String department, String position,
+                       Boolean enabled, LocalDateTime createTime, LocalDateTime updateTime) {
         this.id = id;
         this.username = username;
         this.name = name;
-        this.role = role;
+        this.roleCode = roleCode;
         this.password = password;
         this.email = email;
         this.phone = phone;
@@ -41,4 +41,9 @@ public class UserInfoDTO {
         this.updateTime = updateTime;
         this.avatar = "/api/avatar/default-avatar.png";
     }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
 }

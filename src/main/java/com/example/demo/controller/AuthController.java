@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ForgotPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.service.AuthService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,16 @@ public class AuthController {
     @PostMapping("/logout")
     public void logout(@RequestHeader("Authorization") String token) {
         authService.logout(token.replace("Bearer ", ""));
+    }
+
+    @PostMapping("/register")
+    public LoginResponse register(@RequestBody RegisterRequest request) {
+        return authService.register(request);
+    }
+
+    @PostMapping("/forgot-password")
+    public LoginResponse forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        return authService.forgotPassword(request);
     }
 
     @GetMapping("/validate")

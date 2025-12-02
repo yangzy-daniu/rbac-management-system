@@ -2,28 +2,26 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserInfoDTO;
 import com.example.demo.entity.OperationLog;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.repository.OperationLogRepository;
+import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
-import jakarta.annotation.Resource;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,14 +30,27 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final OperationLogRepository operationLogRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public User findById(Long userId){
+        return userRepository.findById(userId).orElse(null);
+    }
 
     public UserInfoDTO getUserInfo(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             return null;
         }
-
-        return new UserInfoDTO(
+        // 获取角色名称
+        String roleName = "用户";
+        if (user.getRoleCode() != null) {
+            Optional<Role> role = roleRepository.findByCode(user.getRoleCode());
+            if (role != null) {
+                roleName = role.orElseThrow().getName();
+            }
+        }
+        UserInfoDTO dto = new UserInfoDTO(
                 user.getId(),
                 user.getUsername(),
                 user.getName(),
@@ -54,6 +65,8 @@ public class UserService {
                 user.getCreateTime(),
                 user.getUpdateTime()
         );
+        dto.setRoleName(roleName);
+        return dto;
     }
 
     public User updateUserInfo(Long userId, User updatedUser) {
@@ -66,9 +79,24 @@ public class UserService {
             user.setName(updatedUser.getName());
         }
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-            user.setPassword(updatedUser.getPassword());
+            // 使用 PasswordEncoder 加密密码
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
-
+        if (updatedUser.getNickname() != null) {
+            user.setNickname(updatedUser.getNickname());
+        }
+        if (updatedUser.getEmail() != null) {
+            user.setEmail(updatedUser.getEmail());
+        }
+        if (updatedUser.getPhone() != null) {
+            user.setPhone(updatedUser.getPhone());
+        }
+        if (updatedUser.getDepartment() != null) {
+            user.setDepartment(updatedUser.getDepartment());
+        }
+        if (updatedUser.getPosition() != null) {
+            user.setPosition(updatedUser.getPosition());
+        }
         return userRepository.save(user);
     }
 
