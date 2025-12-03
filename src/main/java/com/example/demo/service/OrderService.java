@@ -12,6 +12,7 @@ import com.example.demo.repository.OrderLogRepository;
 import com.example.demo.repository.OrderRepository;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,12 +29,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderLogRepository orderLogRepository;
+    private final SystemTodoService systemTodoService;
 
     // 查询订单列表（分页+搜索）
     public Page<OrderDTO> getOrders(int page, int size, String orderNo, String customer, String status) {
@@ -110,7 +113,15 @@ public class OrderService {
 
         // 记录操作日志
         addOrderLog(savedOrder.getId(), "创建订单", "系统", "info", "用户提交订单");
-
+        // 自动创建订单处理待办
+        try {
+            systemTodoService.createOrderProcessingTodo(
+                    savedOrder.getOrderNo(),
+                    savedOrder.getItems().size()
+            );
+        } catch (Exception e) {
+            log.error("创建订单处理待办失败，但不影响订单创建: {}", e.getMessage());
+        }
         return convertToDetailDTO(savedOrder);
     }
 
