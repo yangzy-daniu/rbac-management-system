@@ -30,15 +30,7 @@ public class User {
     private String department;
     private String position;
     private Boolean enabled = true;
-
-    /**
-     * 创建时间
-     */
     private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
     private LocalDateTime updateTime;
 
     // 角色字段，可以扩展为角色表

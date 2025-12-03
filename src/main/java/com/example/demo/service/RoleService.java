@@ -74,7 +74,7 @@ public class RoleService {
         List<RoleMenu> allRoleMenus = roleMenuRepository.findAllByRoleIdIn(roleIds);
 
         // 获取所有涉及的菜单ID
-        List<String> menuIds = allRoleMenus.stream()
+        List<Long> menuIds = allRoleMenus.stream()
                 .map(RoleMenu::getMenuCode) // 假设这里存储的是菜单ID
                 .distinct()
                 .collect(Collectors.toList());
@@ -88,24 +88,22 @@ public class RoleService {
                 ));
 
         // 按角色ID分组菜单代码
-        Map<Long, List<String>> menuPermissionsMap = allRoleMenus.stream()
+        Map<Long, List<Long>> menuPermissionsMap = allRoleMenus.stream()
                 .collect(Collectors.groupingBy(
                         RoleMenu::getRoleId,
-                        Collectors.mapping(roleMenu -> {
-                            // 将菜单ID转换为菜单名称，如果找不到名称则使用ID
-                            Long menuId = Long.valueOf(roleMenu.getMenuCode());
-                            return menuNameMap.getOrDefault(menuId, String.valueOf(menuId));
-                        }, Collectors.toList())
+                        Collectors.mapping(
+                                RoleMenu::getMenuCode,  // 直接获取菜单代码
+                                Collectors.toList()
+                        )
                 ));
-
         // 为每个角色设置菜单权限（现在包含的是菜单名称）
         for (Role role : roles) {
-            List<String> permissions = menuPermissionsMap.get(role.getId());
+            List<Long> permissions = menuPermissionsMap.get(role.getId());
             role.setMenuPermissions(permissions != null ? permissions : new ArrayList<>());
         }
     }
 
-    private void saveRoleMenus(Long roleId, List<String> menuPermissions) {
+    private void saveRoleMenus(Long roleId, List<Long> menuPermissions) {
         if (menuPermissions == null || menuPermissions.isEmpty()) {
             return;
         }
@@ -204,7 +202,7 @@ public class RoleService {
         if (roleOptional.isPresent()) {
             Role role = roleOptional.get();
             // 查询并设置菜单权限
-            List<String> menuPermissions = roleMenuRepository.findMenuCodesByRoleId(id);
+            List<Long> menuPermissions = roleMenuRepository.findMenuCodesByRoleId(id);
             role.setMenuPermissions(menuPermissions);
         }
 

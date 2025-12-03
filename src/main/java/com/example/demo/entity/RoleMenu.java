@@ -15,5 +15,5 @@ public class RoleMenu {
     private Long roleId;
 
     @Column(name = "menu_code", nullable = false)
-    private String menuCode;
+    private Long menuCode;
 }

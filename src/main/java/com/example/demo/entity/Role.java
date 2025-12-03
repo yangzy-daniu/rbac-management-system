@@ -22,11 +22,8 @@ public class Role {
 
     private String description;
 
-//    @ElementCollection
-//    @CollectionTable(name = "role_menus", joinColumns = @JoinColumn(name = "role_id"))
-//    @Column(name = "menu_code")
     @Transient
-    private List<String> menuPermissions;
+    private List<Long> menuPermissions;
 
     private LocalDateTime createTime;
     private LocalDateTime updateTime;

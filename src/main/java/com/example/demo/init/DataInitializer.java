@@ -373,18 +373,18 @@ public class DataInitializer {
 
     private void assignAllMenusToRole(Long roleId, List<Menu> menus) {
         for (Menu menu : menus) {
-            createRoleMenu(roleId, String.valueOf(menu.getId()));
+            createRoleMenu(roleId, menu.getId());
         }
     }
 
     private void assignMenusToRole(Long roleId, String menuPath) {
         Menu menu = menuRepository.findByPath(menuPath);
         if (menu != null) {
-            createRoleMenu(roleId, String.valueOf(menu.getId()));
+            createRoleMenu(roleId, menu.getId());
         }
     }
 
-    private void createRoleMenu(Long roleId, String menuCode) {
+    private void createRoleMenu(Long roleId, Long menuCode) {
         RoleMenu roleMenu = new RoleMenu();
         roleMenu.setRoleId(roleId);
         roleMenu.setMenuCode(menuCode);
