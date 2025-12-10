@@ -12,7 +12,6 @@ import java.lang.management.OperatingSystemMXBean;
 @Slf4j
 public class SystemHealthService {
 
-    private final VersionService versionService;
     private final SystemInfoRepository systemInfoRepository;
     private final ApplicationContext applicationContext;
 
@@ -21,10 +20,8 @@ public class SystemHealthService {
         STARTING, RUNNING, DEGRADED, STOPPING, ERROR
     }
 
-    public SystemHealthService(VersionService versionService,
-                               SystemInfoRepository systemInfoRepository,
+    public SystemHealthService(SystemInfoRepository systemInfoRepository,
                                ApplicationContext applicationContext) {
-        this.versionService = versionService;
         this.systemInfoRepository = systemInfoRepository;
         this.applicationContext = applicationContext;
     }
@@ -119,4 +116,5 @@ public class SystemHealthService {
         long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);
         return String.format("%dMB/%dMB", usedMemory, maxMemory);
     }
+
 }

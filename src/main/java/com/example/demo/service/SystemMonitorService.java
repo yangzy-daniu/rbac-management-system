@@ -26,6 +26,7 @@ public class SystemMonitorService {
 
     private final SystemInfoRepository systemInfoRepository;
     private final OnlineUserRepository onlineUserRepository;
+    private final SystemHealthService systemHealthService;
     private final VersionService versionService;
     private final SystemLogService systemLogService;
 
@@ -58,6 +59,60 @@ public class SystemMonitorService {
                 log.info("系统版本更新: {} -> {}", systemInfo.getSystemVersion(), currentVersion);
             }
         }
+    }
+
+    /**
+     * 更新数据库中的系统状态（定时任务调用）
+     */
+    @Scheduled(fixedRate = 60000) // 每分钟执行一次
+    public void updateSystemStatus() {
+        try {
+            SystemInfo realTimeInfo = getRealTimeSystemInfo();
+
+            Optional<SystemInfo> existingOpt = systemInfoRepository.findById(1L);
+            if (existingOpt.isPresent()) {
+                SystemInfo existing = existingOpt.get();
+                // 只更新状态相关字段，不覆盖版本等基础信息
+                existing.setSystemStatus(realTimeInfo.getSystemStatus());
+//                existing.setLastUpdateDate(realTimeInfo.getLastUpdateDate());
+                existing.setUpdateTime(realTimeInfo.getUpdateTime());
+//                existing.setDescription(realTimeInfo.getDescription());
+                existing.setUpdateUser(realTimeInfo.getUpdateUser());
+
+                systemInfoRepository.save(existing);
+                log.debug("系统状态已更新: {}", existing.getSystemStatus());
+            }
+        } catch (Exception e) {
+            log.error("更新系统状态失败", e);
+        }
+    }
+
+    /**
+     * 获取实时系统信息（不保存到数据库）
+     */
+    public SystemInfo getRealTimeSystemInfo() {
+        SystemInfo systemInfo = new SystemInfo();
+
+        // 基础信息（从 VersionService 获取）
+        systemInfo.setSystemVersion(versionService.getVersion());
+        systemInfo.setCreateTime(versionService.getBuildDateTime());
+
+        // 实时信息
+        systemInfo.setLastUpdateDate(LocalDateTime.now());
+        systemInfo.setUpdateTime(LocalDateTime.now());
+
+        // 实时状态检测
+        SystemHealthService.SystemStatus status = systemHealthService.checkRealTimeStatus();
+        systemInfo.setSystemStatus(status.name());
+
+//        // 动态描述信息
+//        String description = String.format("RBACK限管理系统 - 负载: %s, 内存: %s",
+//                systemHealthService.getSystemLoad(), systemHealthService.getMemoryInfo());
+//        systemInfo.setDescription(description);
+
+        systemInfo.setUpdateUser("系统监控");
+
+        return systemInfo;
     }
 
     // 获取系统信息
