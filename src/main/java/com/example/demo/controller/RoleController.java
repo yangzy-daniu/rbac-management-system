@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Role;
 import com.example.demo.service.RoleService;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +12,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/roles")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class RoleController {
 
-    @Resource
-    private RoleService roleService;
+    private final RoleService roleService;
 
     // 分页查询角色
     @GetMapping("/page")

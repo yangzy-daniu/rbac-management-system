@@ -5,18 +5,15 @@ import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.service.AuthService;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class AuthController {
 
-    @Resource
-    private AuthService authService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {

@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.common.Result;
-import com.example.demo.service.NotificationService;
 import com.example.demo.dto.NotificationVO;
-import jakarta.annotation.Resource;
+import com.example.demo.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,11 +15,9 @@ import java.util.Map;
 @RequestMapping("/api/notification")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class NotificationController {
 
-    @Resource
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     /**
      * 分页查询通知列表

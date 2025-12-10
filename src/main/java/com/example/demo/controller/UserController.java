@@ -6,7 +6,6 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.UserService;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +22,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
 
-    @Resource
-    private UserRepository repo;
+    private final UserRepository repo;
 
-    @Resource
-    private AuthService authService;
+    private final AuthService authService;
 
-    @Resource
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/getAllUsers")
     public List<User> all() {

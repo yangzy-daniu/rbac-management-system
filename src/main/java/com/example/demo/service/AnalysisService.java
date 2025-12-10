@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class StatsService {
+public class AnalysisService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -39,7 +39,7 @@ public class StatsService {
     }
 
     // 获取所有统计信息
-    public Map<String, Object> getSystemStats() {
+    public Map<String, Object> getQuickStats() {
         return Map.of(
                 "totalUsers", getTotalUsers(),
                 "totalRoles", getTotalRoles(),

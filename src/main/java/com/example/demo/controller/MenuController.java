@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.entity.Menu;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.MenuService;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +14,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/menus")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class MenuController {
 
-    @Resource
-    private MenuService menuService;
+    private final MenuService menuService;
 
-    @Resource
-    private AuthService authService;
+    private final AuthService authService;
 
     @GetMapping
     public List<Menu> getUserMenus() {
