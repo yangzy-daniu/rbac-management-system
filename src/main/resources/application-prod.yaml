@@ -18,17 +18,10 @@ spring:
       settings:
         web-allow-others: true # 允许远程连接
 
-#  security:
-#    basic:
-#      enabled: false
-#  management:
-#    security:
-#      enabled: false
-#
-#  autoconfigure:
-#    exclude:
-#      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-#      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  sql:
+    init:
+      mode: always # never
+      data-locations: classpath:data.sql
 
 logging:
   level:

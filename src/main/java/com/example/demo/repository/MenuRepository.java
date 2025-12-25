@@ -13,7 +13,6 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     List<Menu> findByIdIn(List<Long> menuIds);
 
-    // 新增查询方法
     List<Menu> findAllByOrderBySortAsc();
 
     List<Menu> findByNameContainingIgnoreCaseOrderBySortAsc(String name);

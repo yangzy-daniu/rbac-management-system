@@ -93,7 +93,7 @@ public class DataInitializer {
         Menu analysisMenu = new Menu();
         analysisMenu.setName("数据分析");
         analysisMenu.setPath("/analysis");
-        analysisMenu.setIcon("Histogram");
+        analysisMenu.setIcon("TrendCharts");
         analysisMenu.setSort(4);
         analysisMenu.setType(0); // 目录
         analysisMenu.setAvailable(true);
@@ -115,7 +115,7 @@ public class DataInitializer {
         Menu userAMenu = new Menu();
         userAMenu.setName("用户分析");
         userAMenu.setPath("/userA");
-        userAMenu.setIcon("PieChart");
+        userAMenu.setIcon("Histogram");
         userAMenu.setComponent("UserAnalysis");
         userAMenu.setSort(2);
         userAMenu.setType(1); // 菜单
